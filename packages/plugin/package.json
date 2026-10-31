@@ -1,0 +1,28 @@
+{
+  "name": "@herdr-even/plugin",
+  "private": true,
+  "version": "0.1.3",
+  "type": "module",
+  "scripts": {
+    "gen:app-json": "node scripts/gen-app-json.mjs",
+    "dev": "bun run gen:app-json && vite",
+    "build": "bun run gen:app-json && tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test src",
+    "mock": "bun scripts/mock-bridge.ts",
+    "pack": "bun run build && evenhub pack app.json dist --sdk-ver 0.0.16 -o herdr-even.ehpk",
+    "simulate": "evenhub-simulator http://localhost:5192"
+  },
+  "dependencies": {
+    "@evenrealities/even_hub_sdk": "0.0.16",
+    "@evenrealities/pretext": "latest",
+    "@herdr-even/protocol": "workspace:*"
+  },
+  "devDependencies": {
+    "@evenrealities/evenhub-cli": "latest",
+    "@evenrealities/evenhub-simulator": "latest",
+    "@types/bun": "latest",
+    "typescript": "^5.7.0",
+    "vite": "^5.4.0"
+  }
+}

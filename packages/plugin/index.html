@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>herdr-even</title>
+    <style>
+      :root { color-scheme: dark; --bg: #151515; --card: #1f1f1f; --line: #333; --text: #e8e8e8; --dim: #8e8e8e; --accent: #3CFA44; --bad: #ff6b60; }
+      * { box-sizing: border-box; }
+      html, body { margin: 0; background: var(--bg); color: var(--text); touch-action: manipulation; -webkit-text-size-adjust: 100%;
+        font: 16px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, sans-serif; }
+      main { max-width: 480px; margin: 0 auto; padding: 16px 16px 40px; }
+      [hidden] { display: none !important; }
+      header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; margin-bottom: 20px; }
+      h1 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: .01em; }
+      #conns { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--dim); }
+      .conn { display: inline-flex; align-items: center; gap: 6px; }
+      .conn.open { color: var(--text); }
+      .dot { width: 8px; height: 8px; border-radius: 50%; background: #555; flex: none; }
+      .conn.open .dot { background: var(--accent); }
+      .dim { color: var(--dim); font-size: 13px; }
+      h2 { font-size: 15px; font-weight: 600; margin: 0 0 10px; overflow-wrap: anywhere; }
+      h2 .st { color: var(--dim); font-weight: 500; }
+      h2 .st.working { color: var(--accent); }
+      section { margin-bottom: 28px; }
+      button { min-height: 44px; padding: 0 16px; font: inherit; font-size: 15px; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; }
+      button:active { background: #2c2c2c; }
+      button:disabled { opacity: .4; }
+      button.primary { background: var(--accent); border-color: var(--accent); color: #06260a; font-weight: 600; min-width: 96px; }
+      button.primary:active { background: #2fd637; }
+      textarea, input[type=password] { width: 100%; font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
+      textarea { min-height: 128px; font: 15px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace; resize: vertical; display: block; }
+      textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+      .actions { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+      #kbdMsg { font-size: 14px; color: var(--accent); }
+      #kbdMsg.bad { color: var(--bad); }
+      #kbdKeys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      #kbdKeys button { padding: 0; font-size: 14px; }
+      #kbdQueueList { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+      .qrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 0 0 0 12px; background: var(--card); border-radius: 10px; font-size: 14px; }
+      .qrow span { padding: 10px 0; overflow-wrap: anywhere; min-width: 0; }
+      .qrow button { flex: none; min-width: 44px; border: 0; background: none; color: var(--dim); padding: 0; }
+      .calm { color: var(--dim); padding: 28px 0; text-align: center; font-size: 15px; }
+      #dgEdit { display: flex; flex-wrap: wrap; gap: 8px; }
+      #dgEdit input { flex: 1 1 100%; }
+      #dgEdit .hint { flex: 1 1 100%; margin: 0; }
+      .link { min-height: 44px; padding: 0 8px; background: none; border: 0; color: var(--accent); font-size: 14px; }
+      #dgOn { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 44px; }
+      details { border-top: 1px solid var(--line); padding-top: 12px; }
+      summary { min-height: 44px; display: flex; align-items: center; color: var(--dim); font-size: 14px; }
+      .row { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
+      .row button { min-height: 44px; }
+      #dev h3 { font-size: 12px; color: var(--dim); text-transform: uppercase; letter-spacing: .05em; margin: 16px 0 6px; font-weight: 500; }
+      #dev input[type=number] { width: 56px; min-height: 44px; padding: 0 8px; background: var(--card); color: var(--text); border: 1px solid var(--line); border-radius: 10px; }
+      #dev label { display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; }
+      #pv { background: #000; border: 1px solid var(--line); border-radius: 8px; padding: 6px; max-width: 576px; color: var(--accent); font: 13px/1.35 ui-monospace, monospace; }
+      #pvHeader { border-bottom: 1px solid #1d5a20; padding-bottom: 3px; margin-bottom: 3px; white-space: pre-wrap; }
+      #pvBody { white-space: pre-wrap; word-break: break-word; max-height: 260px; overflow: auto; }
+      #log { height: 200px; overflow: auto; background: #101010; border: 1px solid var(--line); border-radius: 8px; padding: 6px;
+        font: 11px/1.35 ui-monospace, monospace; white-space: pre-wrap; word-break: break-all; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>herdr-even</h1>
+        <div id="conns"></div>
+      </header>
+
+      <section id="composer" hidden>
+        <h2 id="kbdTitle"></h2>
+        <textarea id="kbdText" placeholder="Type a command, path or reply" autocapitalize="off" autocomplete="off" spellcheck="false"></textarea>
+        <div class="actions">
+          <button id="kbdSend" class="primary">Send</button>
+          <button id="kbdQueue" hidden>Queue</button>
+          <span id="kbdMsg" role="status"></span>
+        </div>
+        <div id="kbdKeys">
+          <button data-key="enter">enter</button><button data-key="esc">esc</button><button data-key="ctrl+c">ctrl+c</button>
+          <button data-key="up">↑</button><button data-key="down">↓</button><button data-key="tab">tab</button>
+        </div>
+        <div id="kbdQueueList" hidden></div>
+      </section>
+      <section id="kbdWhy" class="calm"></section>
+
+      <section id="settings">
+        <h2 id="dgTitle">Voice dictation</h2>
+        <div id="dgOn" hidden>
+          <span id="dgOnText">Voice dictation: on</span>
+          <button id="dgChange" class="link">change</button>
+        </div>
+        <div id="dgEdit" hidden>
+          <input id="dgKey" type="password" placeholder="Deepgram API key" autocomplete="off" autocapitalize="off" spellcheck="false" />
+          <p id="dgHint" class="dim hint">Add a Deepgram key to dictate from the glasses. It stays on this phone.</p>
+          <button id="dgSave" class="primary">Save</button>
+          <button id="dgClear">Clear</button>
+          <button id="dgCancel" class="link">Cancel</button>
+        </div>
+      </section>
+
+      <details id="dev" hidden>
+        <summary>Developer</summary>
+        <div id="meta" class="dim"></div>
+        <h3>Glasses: <span id="screen">-</span></h3>
+        <div id="pv"><div id="pvHeader"></div><div id="pvBody"></div></div>
+        <div class="row">
+          <button id="gUp">swipe up</button><button id="gDown">swipe down</button>
+          <button id="gTap">tap</button><button id="gDouble">double tap</button><button id="gLong">long press</button>
+          <input id="gIdx" type="number" value="0" min="0" max="19" /><button id="gSel">select row</button>
+        </div>
+        <h3>Chat scroll mode</h3>
+        <div id="modeRow">
+          <label><input type="radio" name="mode" value="paged" /> paged (exact pages)</label>
+          <label><input type="radio" name="mode" value="native" /> native (firmware scroll)</label>
+        </div>
+        <h3>Log</h3>
+        <div id="log"></div>
+      </details>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
